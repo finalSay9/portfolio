@@ -317,31 +317,31 @@ const Contact: React.FC = () => {
     {
       icon: <WhatsAppIcon className="w-6 h-6" />,
       label: "WhatsApp",
-      href: "https://wa.me/your-number",
+      href: "https://wa.me/+265883341542",
       color: "green"
     },
     {
       icon: <Instagram size={24} />,
       label: "Instagram",
-      href: "https://instagram.com/your-username",
+      href: "https://instagram.com/evancimwaza",
       color: "pink"
     },
     {
       icon: <Linkedin size={24} />,
       label: "LinkedIn",
-      href: "https://linkedin.com/in/your-profile",
+      href: "https://www.linkedin.com/in/evan-chimwaza-a657a5359/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3BxeO5tbdzSOmWoPauop3Gyg%3D%3D",
       color: "blue"
     },
     {
       icon: <Twitter size={24} />,
       label: "X (Twitter)",
-      href: "https://twitter.com/your-username",
+      href: "https://twitter.com/evanchimwaza",
       color: "blue"
     },
     {
       icon: <Facebook size={24} />,
       label: "Facebook",
-      href: "https://facebook.com/your-profile",
+      href: "https://web.facebook.com/evanchimwaza",
       color: "blue"
     }
   ];

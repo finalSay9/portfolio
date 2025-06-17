@@ -420,6 +420,32 @@ const LandingPage: React.FC = () => {
                 transition={{ duration: 1, delay: 1.2 }}
               />
             </div>
+
+            {/* Action Cards */}
+            <motion.div
+              className="flex gap-4 sm:gap-6 mt-6 lg:mt-8"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.5 }}
+            >
+              {/* Hire Me Card - Filled with teal color */}
+              <motion.button
+                className="bg-teal-500 hover:bg-teal-400 text-black font-semibold py-2 px-6 sm:py-3 sm:px-8 rounded-lg shadow-lg shadow-teal-500/30 transition-all duration-300 transform hover:scale-105 hover:shadow-teal-500/50"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Hire Me
+              </motion.button>
+
+              {/* Let's Talk Card - Outlined, no fill */}
+              <motion.button
+                className="border-2 border-teal-400 text-teal-400 hover:text-teal-300 hover:border-teal-300 font-semibold py-2 px-6 sm:py-3 sm:px-8 rounded-lg shadow-lg shadow-teal-500/20 transition-all duration-300 transform hover:scale-105 hover:shadow-teal-500/40 bg-transparent backdrop-blur-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Let &#39;s Talk
+              </motion.button>
+            </motion.div>
           </div>
         </div>
       </div>

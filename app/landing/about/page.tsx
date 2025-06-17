@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useEffect } from "react";
@@ -65,7 +66,8 @@ const AboutPage: React.FC = () => {
                 data-aos="fade-left"
                 data-aos-duration="1000"
               >
-                Hello, I'm
+               Hello, I&#39;m
+
               </h1>
               <h2 
                 className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold text-teal-700 leading-tight"

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import React, { useState } from "react";
+//import { useRouter } from "next/navigation";
+//import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -22,7 +22,7 @@ const headerItems: HeaderItems[] = [
 // Custom Particles Component using Canvas
 const ParticlesBackground: React.FC = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const animationRef = React.useRef<number>();
+  const animationRef = React.useRef<number | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   
   interface Particle {
@@ -149,7 +149,6 @@ const ParticlesBackground: React.FC = () => {
 };
 
 const LandingPage: React.FC = () => {
-  const router = useRouter();
   const [displayedText, setDisplayedText] = useState("");
   const fullText = "Hi, I'm Evan Chimwaza";
 
@@ -293,12 +292,7 @@ const LandingPage: React.FC = () => {
           <div className="h-full relative">
             {/* Placeholder for Image */}
             <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-              <Image 
-                                  src="/evan.jpg" 
-                                  alt="Evan Chimwaza Profile"
-                                  fill
-                                  className="object-cover"
-                                />
+              <span className="text-teal-400 text-lg">Your Image Here</span>
             </div>
 
             {/* Dark smoke overlay effect */}

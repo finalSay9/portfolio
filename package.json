@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.11.2",
     "@tsparticles/engine": "^3.8.1",
     "@tsparticles/slim": "^3.8.1",
     "aos": "^2.3.4",

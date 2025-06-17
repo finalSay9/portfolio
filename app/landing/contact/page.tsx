@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
 import { 
   Send, 
   User, 
@@ -15,7 +14,34 @@ import {
   Heart
 } from "lucide-react";
 
-// Animated Background Component (same as Skills)
+// AOS-like animation hook
+const useAOS = () => {
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('aos-animate');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all elements with data-aos attribute
+    const elements = document.querySelectorAll('[data-aos]');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+};
+
+// Animated Background Component
 const AnimatedBackground: React.FC = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const animationRef = React.useRef<number | null>(null);
@@ -138,7 +164,7 @@ const AnimatedBackground: React.FC = () => {
   );
 };
 
-// Moving Graphs Background
+// Moving Graphs Background with CSS animations
 const MovingGraphs: React.FC = () => {
   return (
     <div className="absolute inset-0 opacity-8 z-1">
@@ -154,88 +180,45 @@ const MovingGraphs: React.FC = () => {
           </linearGradient>
         </defs>
         
-        <motion.path
+        <path
           d="M0,250 Q300,100 600,250 T1200,250 Q1400,100 1600,250"
           stroke="url(#contactGradient1)"
           strokeWidth="1.8"
           fill="none"
-          animate={{ 
-            pathLength: [0, 1, 0], 
-            opacity: [0, 0.7, 0],
-            x: [-50, 50, -50]
-          }}
-          transition={{
-            duration: 9,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
+          className="animate-pulse"
+          style={{ animation: 'float 9s ease-in-out infinite' }}
         />
         
-        <motion.path
+        <path
           d="M200,450 Q500,300 800,450 T1400,450"
           stroke="url(#contactGradient2)"
           strokeWidth="1.2"
           fill="none"
-          animate={{ 
-            pathLength: [0, 1, 0], 
-            opacity: [0, 0.5, 0],
-            x: [80, -80, 80]
-          }}
-          transition={{
-            duration: 11,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 3
-          }}
+          className="animate-pulse"
+          style={{ animation: 'float 11s ease-in-out infinite reverse' }}
         />
         
-        <motion.path
+        <path
           d="M-50,650 Q200,500 450,650 T900,650 Q1150,500 1400,650"
           stroke="#2DD4BF"
           strokeWidth="0.8"
           fill="none"
           opacity="0.25"
-          animate={{
-            x: [0, 150, 0],
-            y: [0, -30, 0]
-          }}
-          transition={{
-            duration: 13,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
+          style={{ animation: 'wave 13s ease-in-out infinite' }}
         />
         
-        <motion.circle
+        <circle
           cx="150"
           cy="180"
           r="25"
           fill="rgba(45, 212, 191, 0.08)"
-          animate={{
-            cx: [150, 250, 150],
-            cy: [180, 80, 180],
-            r: [25, 35, 25]
-          }}
-          transition={{
-            duration: 7,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
+          style={{ animation: 'bounce-float 7s ease-in-out infinite' }}
         />
         
-        <motion.polygon
+        <polygon
           points="900,120 920,140 900,160 880,140"
           fill="rgba(139, 92, 246, 0.08)"
-          animate={{
-            rotate: [0, 360],
-            x: [0, 100, 0],
-            y: [0, 80, 0]
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "linear"
-          }}
+          style={{ animation: 'spin-float 10s linear infinite' }}
         />
       </svg>
     </div>
@@ -265,22 +248,20 @@ interface SocialLinkProps {
 
 const SocialLink: React.FC<SocialLinkProps> = ({ icon, label, href, color, delay = 0 }) => {
   return (
-    <motion.a
+    <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`flex items-center space-x-3 p-4 rounded-lg bg-black/30 backdrop-blur-sm border border-teal-500/20 hover:border-${color}-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-${color}-500/20 group`}
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ scale: 1.02, x: 5 }}
+      className={`flex items-center space-x-3 p-4 rounded-lg bg-black/30 backdrop-blur-sm border border-teal-500/20 hover:border-${color}-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-${color}-500/20 group hover:scale-105 hover:translate-x-2`}
+      data-aos="fade-left"
+      data-aos-delay={delay * 100}
+      data-aos-duration="600"
     >
       <div className={`text-${color}-400 text-2xl group-hover:text-${color}-300 transition-colors`}>
         {icon}
       </div>
       <span className="text-white font-medium">{label}</span>
-    </motion.a>
+    </a>
   );
 };
 
@@ -292,6 +273,9 @@ const Contact: React.FC = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Initialize AOS-like functionality
+  useAOS();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -317,269 +301,349 @@ const Contact: React.FC = () => {
     {
       icon: <WhatsAppIcon className="w-6 h-6" />,
       label: "WhatsApp",
-      href: "https://wa.me/+265883341542",
+      href: "https://wa.me/your-number",
       color: "green"
     },
     {
       icon: <Instagram size={24} />,
       label: "Instagram",
-      href: "https://instagram.com/evancimwaza",
+      href: "https://instagram.com/your-username",
       color: "pink"
     },
     {
       icon: <Linkedin size={24} />,
       label: "LinkedIn",
-      href: "https://www.linkedin.com/in/evan-chimwaza-a657a5359/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3BxeO5tbdzSOmWoPauop3Gyg%3D%3D",
+      href: "https://linkedin.com/in/your-profile",
       color: "blue"
     },
     {
       icon: <Twitter size={24} />,
       label: "X (Twitter)",
-      href: "https://twitter.com/evanchimwaza",
+      href: "https://twitter.com/your-username",
       color: "blue"
     },
     {
       icon: <Facebook size={24} />,
       label: "Facebook",
-      href: "https://web.facebook.com/evanchimwaza",
+      href: "https://facebook.com/your-profile",
       color: "blue"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden py-12 md:py-20">
-      {/* Animated Background */}
-      <AnimatedBackground />
-      <MovingGraphs />
+    <>
+      <style jsx>{`
+        /* AOS-like animations */
+        [data-aos] {
+          opacity: 0;
+          transform: translateY(50px);
+          transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        [data-aos="fade-up"] {
+          transform: translateY(50px);
+        }
+        
+        [data-aos="fade-down"] {
+          transform: translateY(-50px);
+        }
+        
+        [data-aos="fade-left"] {
+          transform: translateX(-50px);
+        }
+        
+        [data-aos="fade-right"] {
+          transform: translateX(50px);
+        }
+        
+        [data-aos="zoom-in"] {
+          transform: scale(0.8);
+        }
+        
+        [data-aos].aos-animate {
+          opacity: 1;
+          transform: translateY(0) translateX(0) scale(1);
+        }
+        
+        /* Custom animations for SVG elements */
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+        
+        @keyframes wave {
+          0%, 100% {
+            transform: translateX(0px) translateY(0px);
+          }
+          50% {
+            transform: translateX(150px) translateY(-30px);
+          }
+        }
+        
+        @keyframes bounce-float {
+          0%, 100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          50% {
+            transform: translate(100px, -100px) scale(1.4);
+          }
+        }
+        
+        @keyframes spin-float {
+          0% {
+            transform: rotate(0deg) translate(0px, 0px);
+          }
+          50% {
+            transform: rotate(180deg) translate(100px, 80px);
+          }
+          100% {
+            transform: rotate(360deg) translate(0px, 0px);
+          }
+        }
+        
+        .pulse-gradient {
+          animation: pulse-gradient 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-gradient {
+          0%, 100% {
+            background-image: linear-gradient(45deg, #2DD4BF, #8B5CF6);
+          }
+          50% {
+            background-image: linear-gradient(45deg, #8B5CF6, #2DD4BF);
+          }
+        }
+        
+        .loading-spinner {
+          animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        
+        .heart-beat {
+          animation: heartbeat 2s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+          0%, 100% {
+            opacity: 0.7;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+      `}</style>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
-        <motion.div
-          className="text-center mb-12 md:mb-16"
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.h1
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-teal-400 mb-4"
-            animate={{ 
-              backgroundImage: [
-                "linear-gradient(45deg, #2DD4BF, #8B5CF6)",
-                "linear-gradient(45deg, #8B5CF6, #2DD4BF)",
-                "linear-gradient(45deg, #2DD4BF, #8B5CF6)"
-              ]
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            Contact Me
-          </motion.h1>
-          <motion.div
-            className="w-24 md:w-32 h-1 bg-gradient-to-r from-teal-500 to-purple-400 mx-auto rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: "auto" }}
-            transition={{ duration: 1, delay: 0.5 }}
-          />
-          <motion.p
-            className="text-gray-400 text-lg mt-4 max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            Let &#39;s connect and discuss how we can work together on your next project
-          </motion.p>
-        </motion.div>
+      <div className="min-h-screen bg-black relative overflow-hidden py-12 md:py-20">
+        {/* Animated Background */}
+        <AnimatedBackground />
+        <MovingGraphs />
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Section */}
+          <div className="text-center mb-12 md:mb-16">
+            <h1
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-teal-400 mb-4 pulse-gradient bg-clip-text text-transparent"
+              data-aos="fade-down"
+              data-aos-duration="800"
+            >
+              Contact Me
+            </h1>
+            <div
+              className="w-24 md:w-32 h-1 bg-gradient-to-r from-teal-500 to-purple-400 mx-auto rounded-full"
+              data-aos="zoom-in"
+              data-aos-delay="500"
+              data-aos-duration="1000"
+            />
+            <p
+              className="text-gray-400 text-lg mt-4 max-w-2xl mx-auto"
+              data-aos="fade-up"
+              data-aos-delay="800"
+              data-aos-duration="800"
+            >
+               Let &#39;s connect and discuss how we can work together on your next project
+            </p>
+          </div>
 
-        {/* Main Content - Two Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-16 md:mb-20">
-          
-          {/* Contact Form Card */}
-          <motion.div
-            className="bg-black/40 backdrop-blur-md border border-teal-500/20 rounded-xl p-6 md:p-8 hover:border-teal-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-2xl md:text-3xl font-bold text-teal-400 mb-6 text-center">
-              Get in Touch
-            </h2>
+          {/* Main Content - Two Cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-16 md:mb-20">
             
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name Field */}
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-teal-400" />
+            {/* Contact Form Card */}
+            <div
+              className="bg-black/40 backdrop-blur-md border border-teal-500/20 rounded-xl p-6 md:p-8 hover:border-teal-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20"
+              data-aos="fade-right"
+              data-aos-duration="600"
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-teal-400 mb-6 text-center">
+                Get in Touch
+              </h2>
+              
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Name Field */}
+                <div
+                  className="relative"
+                  data-aos="fade-up"
+                  data-aos-delay="100"
+                  data-aos-duration="500"
+                >
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-teal-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Your Name"
+                    required
+                    className="block w-full pl-10 pr-3 py-3 border border-teal-500/30 rounded-lg bg-black/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                  />
                 </div>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Your Name"
-                  required
-                  className="block w-full pl-10 pr-3 py-3 border border-teal-500/30 rounded-lg bg-black/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
-                />
-              </motion.div>
 
-              {/* Email Field */}
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-teal-400" />
+                {/* Email Field */}
+                <div
+                  className="relative"
+                  data-aos="fade-up"
+                  data-aos-delay="200"
+                  data-aos-duration="500"
+                >
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-teal-400" />
+                  </div>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Your Email"
+                    required
+                    className="block w-full pl-10 pr-3 py-3 border border-teal-500/30 rounded-lg bg-black/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
+                  />
                 </div>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Your Email"
-                  required
-                  className="block w-full pl-10 pr-3 py-3 border border-teal-500/30 rounded-lg bg-black/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300"
-                />
-              </motion.div>
 
-              {/* Message Field */}
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
-                  <MessageSquare className="h-5 w-5 text-teal-400" />
+                {/* Message Field */}
+                <div
+                  className="relative"
+                  data-aos="fade-up"
+                  data-aos-delay="300"
+                  data-aos-duration="500"
+                >
+                  <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                    <MessageSquare className="h-5 w-5 text-teal-400" />
+                  </div>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    placeholder="Your Message"
+                    required
+                    rows={4}
+                    className="block w-full pl-10 pr-3 py-3 border border-teal-500/30 rounded-lg bg-black/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300 resize-none"
+                  />
                 </div>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  placeholder="Your Message"
-                  required
-                  rows={4}
-                  className="block w-full pl-10 pr-3 py-3 border border-teal-500/30 rounded-lg bg-black/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all duration-300 resize-none"
-                />
-              </motion.div>
 
-              {/* Submit Button */}
-              <motion.button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-teal-500 hover:bg-teal-400 disabled:bg-teal-500/50 text-black font-semibold py-3 px-6 rounded-lg shadow-lg shadow-teal-500/30 transition-all duration-300 transform hover:scale-105 hover:shadow-teal-500/50 flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:hover:scale-100"
-                whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
-                whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                {isSubmitting ? (
-                  <>
-                    <motion.div
-                      className="w-5 h-5 border-2 border-black border-t-transparent rounded-full"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
-                    <span>Sending...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-5 w-5" />
-                    <span>Send Message</span>
-                  </>
-                )}
-              </motion.button>
-            </form>
-          </motion.div>
-
-          {/* Social Media Card */}
-          <motion.div
-            className="bg-black/40 backdrop-blur-md border border-teal-500/20 rounded-xl p-6 md:p-8 hover:border-teal-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-2xl md:text-3xl font-bold text-teal-400 mb-6 text-center">
-              Connect with Me
-            </h2>
-            
-            <div className="space-y-4">
-              {socialLinks.map((social, index) => (
-                <SocialLink
-                  key={index}
-                  icon={social.icon}
-                  label={social.label}
-                  href={social.href}
-                  color={social.color}
-                  delay={index * 0.1}
-                />
-              ))}
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-teal-500 hover:bg-teal-400 disabled:bg-teal-500/50 text-black font-semibold py-3 px-6 rounded-lg shadow-lg shadow-teal-500/30 transition-all duration-300 transform hover:scale-105 hover:shadow-teal-500/50 flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  data-aos="fade-up"
+                  data-aos-delay="400"
+                  data-aos-duration="500"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full loading-spinner" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-5 w-5" />
+                      <span>Send Message</span>
+                    </>
+                  )}
+                </button>
+              </form>
             </div>
 
-            {/* Additional Contact Info */}
-            <motion.div
-              className="mt-8 p-4 bg-black/20 rounded-lg border border-teal-500/10"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.6 }}
+            {/* Social Media Card */}
+            <div
+              className="bg-black/40 backdrop-blur-md border border-teal-500/20 rounded-xl p-6 md:p-8 hover:border-teal-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20"
+              data-aos="fade-left"
+              data-aos-duration="600"
             >
-              <h3 className="text-lg font-semibold text-teal-400 mb-2 flex items-center">
-                <Phone className="h-5 w-5 mr-2" />
-                Quick Response
-              </h3>
-              <p className="text-gray-300 text-sm">
-                I typically respond to messages within 24 hours. For urgent inquiries, 
-                please reach out via WhatsApp or LinkedIn.
-              </p>
-            </motion.div>
-          </motion.div>
-        </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-teal-400 mb-6 text-center">
+                Connect with Me
+              </h2>
+              
+              <div className="space-y-4">
+                {socialLinks.map((social, index) => (
+                  <SocialLink
+                    key={index}
+                    icon={social.icon}
+                    label={social.label}
+                    href={social.href}
+                    color={social.color}
+                    delay={index}
+                  />
+                ))}
+              </div>
 
-        {/* Footer */}
-        <motion.footer
-          className="text-center py-8 border-t border-teal-500/20"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.p
-            className="text-gray-400 mb-2 flex items-center justify-center space-x-2"
-            animate={{ opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+ kurzen
+              {/* Additional Contact Info */}
+              <div
+                className="mt-8 p-4 bg-black/20 rounded-lg border border-teal-500/10"
+                data-aos="fade-up"
+                data-aos-delay="600"
+                data-aos-duration="500"
+              >
+                <h3 className="text-lg font-semibold text-teal-400 mb-2 flex items-center">
+                  <Phone className="h-5 w-5 mr-2" />
+                  Quick Response
+                </h3>
+                <p className="text-gray-300 text-sm">
+                  I typically respond to messages within 24 hours. For urgent inquiries, 
+                  please reach out via WhatsApp or LinkedIn.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <footer
+            className="text-center py-8 border-t border-teal-500/20"
+            data-aos="fade-up"
+            data-aos-duration="600"
           >
-            <span>Made with</span>
-            <Heart className="h-4 w-4 text-red-400" />
-            <span>by Evan Chimwaza</span>
-          </motion.p>
-          <p className="text-sm text-gray-500">
-            © 2025 Evan Chimwaza. All rights reserved.
-          </p>
-        </motion.footer>
+            <p className="text-gray-400 mb-2 flex items-center justify-center space-x-2 heart-beat">
+              <span>Made with</span>
+              <Heart className="h-4 w-4 text-red-400" />
+              <span>by Evan Chimwaza</span>
+            </p>
+            <p className="text-sm text-gray-500">
+              © 2025 Evan Chimwaza. All rights reserved.
+            </p>
+          </footer>
 
-        {/* Decorative Elements */}
-        <div className="absolute top-1/4 left-8 w-2 h-2 md:w-3 md:h-3 bg-purple-400 rounded-full animate-ping opacity-75"></div>
-        <div className="absolute bottom-1/3 right-8 w-3 h-3 md:w-4 md:h-4 bg-teal-300 rounded-full animate-pulse opacity-50"></div>
-        <div className="absolute top-2/3 left-1/6 w-2 h-2 md:w-3 md:h-3 bg-purple-500 rounded-full animate-bounce opacity-60"></div>
-        <div className="absolute top-1/6 right-1/4 w-4 h-4 md:w-6 md:h-6 bg-teal-400 rounded-full animate-pulse opacity-40"></div>
+          {/* Decorative Elements */}
+          <div className="absolute top-1/4 left-8 w-2 h-2 md:w-3 md:h-3 bg-purple-400 rounded-full animate-ping opacity-75"></div>
+          <div className="absolute bottom-1/3 right-8 w-3 h-3 md:w-4 md:h-4 bg-teal-300 rounded-full animate-pulse opacity-50"></div>
+          <div className="absolute top-2/3 left-1/6 w-2 h-2 md:w-3 md:h-3 bg-purple-500 rounded-full animate-bounce opacity-60"></div>
+          <div className="absolute top-1/6 right-1/4 w-4 h-4 md:w-6 md:h-6 bg-teal-400 rounded-full animate-pulse opacity-40"></div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

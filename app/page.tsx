@@ -3,6 +3,7 @@ import React from "react";
 import Navbar from './landing/about/page'
 import Sidebar from "./landing/navbar/page";
 import Skills from "./landing/skills/page";
+import Contact from "./landing/contact/page";
 
 const Page: React.FC = () => {
   return (
@@ -18,6 +19,9 @@ const Page: React.FC = () => {
       {/* Skills Section at the bottom */}
       <div className="flex-1">
         <Skills />
+      </div>
+      <div className="flex-1">
+        <Contact />
       </div>
     </div>
   );

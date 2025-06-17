@@ -86,7 +86,7 @@ const ParticlesBackground: React.FC = () => {
         
         // Update opacity
         particle.opacity += particle.opacityDirection * 0.005;
-        if (particle.opacity <= 0.1 || particle.opacity >= 0.6) {
+        if (particle.opacity <= 0.1 || particle.opacity >= 0.9) {
           particle.opacityDirection *= -1;
         }
         
@@ -144,7 +144,7 @@ const ParticlesBackground: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 opacity-30"
+      className="absolute inset-0 opacity-200"
       style={{ zIndex: 0 }}
     />
   );

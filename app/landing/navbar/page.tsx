@@ -434,7 +434,7 @@ const LandingPage: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                you have a project ?
+                a project ?
               </motion.button>
 
               {/* Let's Talk Card - Outlined, no fill */}

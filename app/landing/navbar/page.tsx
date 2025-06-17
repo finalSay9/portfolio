@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 //import { useRouter } from "next/navigation";
-//import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -292,7 +292,13 @@ const LandingPage: React.FC = () => {
           <div className="h-full relative">
             {/* Placeholder for Image */}
             <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-              <span className="text-teal-400 text-lg">Your Image Here</span>
+              
+               <Image 
+                                  src="/evan.jpg" 
+                                  alt="Evan Chimwaza Profile"
+                                  fill
+                                  className="object-cover"
+                                />
             </div>
 
             {/* Dark smoke overlay effect */}
